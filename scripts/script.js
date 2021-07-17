@@ -15,7 +15,7 @@ function constructPup() {
 
 function setOutput() {
 	document.getElementById("output").innerHTML = ``;
-	const litterSize = 4;
+	const litterSize = 1;
 	for (let i = 1; i <= litterSize; i++) {
 		const pup = new constructPup();
 		if (i > 1) { document.getElementById("output").innerHTML += `<br><br>`; }
