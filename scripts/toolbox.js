@@ -1,7 +1,7 @@
-// Snippets
+// SNIPPETS
 // .replace(/(,\s)(?!.*\1)/, ' and ') <-- find last instance
  
-// functions
+// FUNCTIONS
 function browserCheck() {
 	if (window.chrome) {
 		browser.style.display = 'none';
@@ -10,16 +10,6 @@ function browserCheck() {
  
 function reload() {
 	window.location.reload(false);
-}
- 
-// select all output
-function selectText(containerid) {
-	if (window.getSelection) {
-		var range = document.createRange();
-		range.selectNode(document.getElementById(containerid));
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(range);
-	}
 }
  
 function rng(max) {

@@ -5,12 +5,27 @@
 	<meta charset="utf-8">
 	<title>Myth Randomizer Roller</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
 	<div id="wrapper">
 		<div id="input">
+			<div id="wrapperOptions">
+				<select id="selectSpecies"><option value="">Species</option></select>
+				<select id="selectGender"><option value="">Gender</option></select>
+				<select id="selectRank"><option value="">Rank</option></select>
+
+				<span class="break"></span>
+
+				<select id="selectBuild"><option value="">Build</option></select>
+				<select id="selectEars"><option value="">Ear Trait</option></select>
+				<select id="selectTail"><option value="">Tail Trait</option></select>
+				<select id="selectBonusTrait"><option value="">Bonus Trait</option></select>
+			</div>
 			<button id="buttonRoll" onclick="buttonPress()">Get Random Geno</button>
 		</div>
 

@@ -1,4 +1,14 @@
 // DOING THE DO
+function constructInput() {
+	this.species = document.getElementById('selectSpecies').value || false;
+	this.gender = document.getElementById('selectGender').value || false;
+	this.rank = document.getElementById('selectRank').value || false;
+	this.build = document.getElementById('selectBuild').value || false;
+	this.earTrait = document.getElementById('selectEars').value || false;
+	this.tailTrait = document.getElementById('selectTail').value || false;
+	this.bonusTrait = document.getElementById('selectBonusTrait').value || false;
+}
+
 function constructPup() {
 	this.species = handleSpecies() || 'species';
 	this.gender = handleGender() || 'gender';
@@ -13,8 +23,10 @@ function constructPup() {
 	this.hereditaryTraits = handleHereditaryTraits() || 'hereditary traits';
 }
 
-function setOutput() {
+let input = {};
+function buttonPress() {
 	document.getElementById("output").innerHTML = ``;
+	input = new constructInput();
 	const litterSize = 1;
 	for (let i = 1; i <= litterSize; i++) {
 		const pup = new constructPup();
@@ -31,17 +43,100 @@ function setOutput() {
 	}
 }
 
-function buttonPress() {
-	setOutput();
-}
+// LISTS
+const species = {
+	common: [
+		'Velox',
+		'Hexin',
+		'Enquisitors',
+	],
+	uncommon: [
+		'Arcid',
+		'Zinner',
+	],
+	rare: [
+		'Zephies',
+		'Minkins',
+		'Funia',
+	],
+};
+
+const builds = {
+	common: [
+		'Natural',
+	],
+	uncommon: [
+		'Sphynx',
+		'Satin',
+		'Ridgeback',
+	],
+	rare: [
+		'Leo',
+	],
+};
+
+const ears = [
+	'Folded Ears',
+	'Standard Ears',
+	'Rounded Ears',
+	'Pointed Ears',
+	'Tipsy Ears',
+	'Furred Ears',
+	'Horned Ears',
+];
+
+const tails = [
+	'Curl Ears',
+	'Half Ears',
+	'Double Ears',
+	'Kyuubi Ears',
+	'Fin Ears',
+	'Equus Ears',
+	'Leopard Ears',
+	'Tuft Ears',
+];
+
+const bonusTraits = [
+	'Fangs',
+	'Horns',
+	'Spikes',
+	'Tusks',
+	'Quills',
+	'Elemental',
+	'Theri Claws',
+	'Fins',
+	'Scales / Armor Plates',
+	'Antennas',
+	'Dragon Vines',
+];
+
+// const hereditaryTraits = {
+// 	common: [
+// 		'Hunter',
+// 		'Feathery Flyer',
+// 		'Bone Crusher',
+// 		'Fisher',
+// 		'Explorer',
+// 		'Camper',
+// 	],
+// 	uncommon: [
+
+// 	],
+// 	rare: [
+
+// 	],
+// 	unique: [
+
+// 	],
+// }
 
 // HANDLERS
 function handleSpecies() {
-	return;
+	return input.species || randomizer(rngList([[70, species.common],[95, species.uncommon],[100, species.rare]], 100));
 }
 
 function handleGender() {
-	return rngList([[50,'Male'],[100,'Female']], 100);
+	return input.gender || rngList([[50, 'Male'],[100, 'Female']], 100);
 }
 
 function handleStatus() {
@@ -49,11 +144,15 @@ function handleStatus() {
 }
 
 function handleRank() {
-	return rngList([[95,'Ruby Rank'],[100,'Omega Rank']], 100);
+	return input.rank || rngList([[95, 'Ruby Rank'],[100, 'Omega Rank']], 100);
 }
 
 function handleBuild() {
-	return;
+	const b = input.build || randomizer(rngList([[70, builds.common],[95, builds.uncommon],[100, builds.rare]], 100));
+	const e = input.earTrait || rng(100) <= 10 && `${randomizer(ears)}` || ``;
+	const t = input.tailTrait || rng(100) <= 10 && `${randomizer(tails)}` || ``;
+	const bt = input.bonusTrait || rng(100) <= 10 && `${randomizer(bonusTraits)}` || ``;
+	return [b, e, t, bt].filter(Boolean).join(', ');
 }
 
 function handleMutation() {
@@ -79,3 +178,12 @@ function handleRunes() {
 function handleHereditaryTraits() {
 	return;
 }
+
+// SETUP PAGE
+populate('selectSpecies', species, 'optGroup');
+populate('selectGender', ['Male','Female'], 'simple');
+populate('selectRank', ['Ruby Rank', 'Omega Rank'], 'simple');
+populate('selectBuild', builds, 'optGroup');
+populate('selectEars', ears, 'simple');
+populate('selectTail', tails, 'simple');
+populate('selectBonusTrait', bonusTraits, 'simple');
