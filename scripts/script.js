@@ -63,15 +63,15 @@ const species = {
 
 const builds = {
 	common: [
-		'Natural',
+		'Natural Build',
 	],
 	uncommon: [
-		'Sphynx',
-		'Satin',
-		'Ridgeback',
+		'Sphynx Build',
+		'Satin Build',
+		'Ridgeback Build',
 	],
 	rare: [
-		'Leo',
+		'Leo Build',
 	],
 };
 
@@ -86,14 +86,14 @@ const ears = [
 ];
 
 const tails = [
-	'Curl Ears',
-	'Half Ears',
-	'Double Ears',
-	'Kyuubi Ears',
-	'Fin Ears',
-	'Equus Ears',
-	'Leopard Ears',
-	'Tuft Ears',
+	'Curled Tail',
+	'Half Tail',
+	'Double Tail',
+	'Kyuubi Tail',
+	'Fin Tail',
+	'Equus Tail',
+	'Leopard Tail',
+	'Tuft Tail',
 ];
 
 const bonusTraits = [
@@ -144,7 +144,7 @@ function handleStatus() {
 }
 
 function handleRank() {
-	return input.rank || rngList([[95, 'Ruby Rank'],[100, 'Omega Rank']], 100);
+	return input.rank || rngList([[95, 'Runt Rank'],[100, 'Omega Rank']], 100);
 }
 
 function handleBuild() {
@@ -179,10 +179,10 @@ function handleHereditaryTraits() {
 	return;
 }
 
-// SETUP PAGE
+// PAGE SETUP
 populate('selectSpecies', species, 'optGroup');
 populate('selectGender', ['Male','Female'], 'simple');
-populate('selectRank', ['Ruby Rank', 'Omega Rank'], 'simple');
+populate('selectRank', ['Runt Rank', 'Omega Rank'], 'simple');
 populate('selectBuild', builds, 'optGroup');
 populate('selectEars', ears, 'simple');
 populate('selectTail', tails, 'simple');
