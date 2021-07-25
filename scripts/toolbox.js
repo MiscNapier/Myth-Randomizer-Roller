@@ -121,6 +121,8 @@ function rngList(array, roll) {
 	// console.log(output);
 	return output;
 }
+
+// HTML THINGIES
  
 function toggleDisplay(checkbox, toggle) {
 	checkbox = document.getElementById(checkbox).checked;
@@ -187,7 +189,7 @@ function toggleDisplay(checkbox, toggle) {
  
 		 let options = array[gro];
 		 for (let i = 0; i < options.length; i++) {
-			let opt = options[i][0];
+			let opt = options[i][1];
 			let ele = document.createElement('option');
 			ele.textContent = opt;
 			ele.value = opt.replace(/\s/g, '');

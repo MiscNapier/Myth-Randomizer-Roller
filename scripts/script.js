@@ -13,20 +13,35 @@ function constructInput() {
 	this.tailTrait = document.getElementById('selectTail').value || false;
 	this.bonusTrait = document.getElementById('selectBonusTrait').value || false;
 	this.coatColour = document.getElementById('selectCoatColour').value || false;
+	this.marking = document.getElementById('selectMarking').value || false;
 }
 
+let pup = {
+	species: undefined,
+	gender: undefined,
+	status: undefined,
+	rank: undefined,
+	build: undefined,
+	mutation: undefined,
+	genotype: undefined,
+	phenotype: undefined,
+	skills: undefined,
+	runes: undefined,
+	hereditaryTraits: undefined,
+};
+
 function constructPup() {
-	this.species = handleSpecies() || 'species';
-	this.gender = handleGender() || 'gender';
-	this.status = handleStatus() || 'status';
-	this.rank = handleRank() || 'rank';
-	this.build = handleBuild() || 'build';
-	this.mutation = handleMutation();
-	this.genotype = handleGenotype() || 'genotype';
-	this.phenotype = handlePhenotype() || 'phenotype';
-	this.skills = handleSkills() || 'skills';
-	this.runes = handleRunes() || 'runes';
-	this.hereditaryTraits = handleHereditaryTraits();
+	pup.species = handleSpecies() || 'species';
+	pup.gender = handleGender() || 'gender';
+	pup.status = handleStatus() || 'status';
+	pup.rank = handleRank() || 'rank';
+	pup.build = handleBuild() || 'build';
+	pup.mutation = handleMutation();
+	pup.genotype = handleGenotype() || 'genotype';
+	pup.phenotype = handlePhenotype() || 'phenotype';
+	pup.skills = handleSkills() || 'skills';
+	pup.runes = handleRunes() || 'runes';
+	pup.hereditaryTraits = handleHereditaryTraits();
 }
 
 let input = {};
@@ -35,11 +50,11 @@ function buttonPress() {
 	input = new constructInput();
 	const litterSize = 1;
 	for (let i = 1; i <= litterSize; i++) {
-		const pup = new constructPup();
+		constructPup();
 		document.getElementById("output").innerHTML += i > 1 && `<br><br>` || ``;
 		document.getElementById("output").innerHTML += `${i}) ${pup.species}, ${pup.gender}, ${pup.status}, ${pup.rank}`;
 		document.getElementById("output").innerHTML += `<br>B: ${pup.build}`;
-		document.getElementById("output").innerHTML += pup.mutation !== false && `<br>M: ${pup.mutation}` || ``;
+		document.getElementById("output").innerHTML += pup.mutation !== `` && `<br>M: ${pup.mutation}` || ``;
 		document.getElementById("output").innerHTML += `<br>G: ${pup.genotype}`;
 		document.getElementById("output").innerHTML += `<br>P: ${pup.phenotype}`;
 		document.getElementById("output").innerHTML += `<br><b>Skills:</b> ${pup.skills}`;
@@ -115,33 +130,69 @@ const bonusTraits = [
 	'Dragon Vines',
 ];
 
-const mutationsRandom = [
-	'Albino',
-	'Celestial',
-	'Chimera',
-	'Deaf and Blind',
-	'Sclera',
-	'Polycoria',
-];
-
-const mutationsInbred = [
-	'Amputated',
-	'Angels Gift',
-	'Blind and Deaf',
-	'Harlequin',
-	'Optical',
-	'Zombified',
-];
+const mutations = {
+	random: [
+		'Albino',
+		'Celestial',
+		'Chimera',
+		'Deaf and Blind',
+		'Sclera',
+		'Polycoria',
+	],
+	inbred: [
+		'Amputated',
+		'Angels Gift',
+		'Blind and Deaf',
+		'Harlequin',
+		'Optical',
+		'Zombified',
+	],
+}
 
 const coatColours = {
 	common: [
-		'Daybreak',
+		['Day','Daybreak'],
 	],
 	uncommon: [
-		'Ocean',
+		['Oce','Ocean'],
 	],
 	rare: [
-		'Midnight',
+		['Mid','Midnight'],
+	],
+};
+
+const markings = {
+	common: [
+		['Acc','Accents'],
+		['Bla','Blanket'],
+		['Gli','Glitz'],
+		['Hod','Hood'],
+		['Pts','Points'],
+		['Sab','Sable'],
+		['Mas','Masked'],
+	],
+	uncommon: [
+		['Duo','Dual Tone'],
+		['Mrl','Merle'],
+		['Spe','Spectral'],
+		['Sno','Snowstorm'],
+		['Tab','Tabby'],
+		['Wdg','Wilddog'],
+	],
+	rare: [
+		['Aur','Aura'],
+		['Cal','Calico'],
+		['Def','Defier'],
+		['Pie','Piebald'],
+		['Shi','Shine'],
+	],
+	unique: [
+		['Cry','Cyrstal'],
+		['Mal','Malachite'],
+		['Mtr','Meteor Rain'],
+		['Rev','Reversal'],
+		['Tri','Tribal'],
+		['Voi','Void'],
 	],
 };
 
@@ -192,19 +243,32 @@ function handleBuild() {
 }
 
 function handleMutation() {
-	const modifier = input.solasdrake && input.shadowdrake; 
-	return input.solasdrake && !input.shadowdrake && rng(100) <= 15 && randomizer(mutationsRandom) || 
-	!input.solasdrake && input.shadowdrake && rng(100) <= 15 && randomizer(mutationsInbred) || 
-	rng(100) <= 5 && randomizer(mutationsRandom) ||
-	false;
+	return input.solasdrake && !input.shadowdrake && rng(100) <= 15 && randomizer(mutations.random) || 
+	!input.solasdrake && input.shadowdrake && rng(100) <= 15 && randomizer(mutations.inbred) || 
+	rng(100) <= 5 && randomizer(mutations.random) ||
+	``;
 }
 
-function handleGenotype() {
-	return;
+function handleGenotype() { 
+	// pup.mutation = 'Harlequin';
+	const double = pup.mutation.includes('Chimera') || pup.mutation.includes('Harlequin');
+	const c = () => { return input.coatColour || randomizer(rngList([[70, coatColours.common],[95, coatColours.uncommon],[100, coatColours.rare]], 100))[0]; }
+	let ml = [];
+	const x = rng(5);
+	for (let i = 1; i <= x; i++) { ml.push(randomizer(rngList([[70, markings.common],[87, markings.uncommon],[95, markings.rare],[100, markings.unique]], 100))[0]); }
+	const m = () => { return input.marking || [...new Set(ml)].join('/'); }
+
+	return double && `${[c(),m()].join('/')} // ${[c(),m()].join('/')}` || `${[c(),m()].join('/')}`;
 }
 
 function handlePhenotype() {
-	return input.coatColour || randomizer(rngList([[70, coatColours.common],[95, coatColours.uncommon],[100, coatColours.rare]], 100));;
+	const geno1 = pup.genotype.split('//')[0].split('/').filter(Boolean);
+	const geno2 = pup.genotype.split('//')[1] || false;
+	// console.log(geno1, geno2);
+
+	let phenoDictionary = [];
+
+	return;
 }
 
 function handleSkills() {
@@ -228,4 +292,6 @@ populate('selectBuild', builds, 'optGroup');
 populate('selectEars', ears, 'simple');
 populate('selectTail', tails, 'simple');
 populate('selectBonusTrait', bonusTraits, 'simple');
-populate('selectCoatColour', coatColours, 'optGroup');
+populate('selectMutation', mutations, 'optGroup');
+populate('selectCoatColour', coatColours, 'geneList');
+populate('selectMarking', markings, 'geneList');
