@@ -192,7 +192,7 @@ const markings = {
 		['Shi','Shine'],
 	],
 	unique: [
-		['Cry','Cyrstal'],
+		['Cry','Crystal'],
 		['Mal','Malachite'],
 		['Mtr','Meteor Rain'],
 		['Rev','Reversal'],
