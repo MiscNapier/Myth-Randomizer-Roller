@@ -130,7 +130,7 @@ button:active {
 }
 
 #wrapperOptions > select:last-of-type {
-	margin-right: 0em;
+	/* margin-right: 0em; */
 }
 
 #pillContainer {

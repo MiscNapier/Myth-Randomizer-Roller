@@ -12,8 +12,13 @@ function constructInput() {
 	this.earTrait = document.getElementById('selectEars').value || false;
 	this.tailTrait = document.getElementById('selectTail').value || false;
 	this.bonusTrait = document.getElementById('selectBonusTrait').value || false;
+	this.mutation = document.getElementById('selectMutation').value || false;
 	this.coatColour = document.getElementById('selectCoatColour').value || false;
-	this.marking = document.getElementById('selectMarking').value || false;
+	this.marking1 = document.getElementById('selectMarking1').value || false;
+	this.marking2 = document.getElementById('selectMarking2').value || false;
+	this.marking3 = document.getElementById('selectMarking3').value || false;
+	this.marking4 = document.getElementById('selectMarking4').value || false;
+	this.marking5 = document.getElementById('selectMarking5').value || false;
 }
 
 let pup = {
@@ -218,7 +223,7 @@ const markings = {
 
 // HANDLERS
 function handleSpecies() {
-	return input.species || randomizer(rngList([[70, species.common],[95, species.uncommon],[100, species.rare]], 100));
+	return input.species === 'Common' && randomizer(species.common) || input.species === 'Uncommon' && randomizer(species.uncommon) || input.species === 'Rare' && randomizer(species.rare) || input.species || randomizer(rngList([[70, species.common],[95, species.uncommon],[100, species.rare]], 100));
 }
 
 function handleGender() {
@@ -243,32 +248,53 @@ function handleBuild() {
 }
 
 function handleMutation() {
-	return input.solasdrake && !input.shadowdrake && rng(100) <= 15 && randomizer(mutations.random) || 
+	return input.mutation || input.solasdrake && !input.shadowdrake && rng(100) <= 15 && randomizer(mutations.random) || 
 	!input.solasdrake && input.shadowdrake && rng(100) <= 15 && randomizer(mutations.inbred) || 
 	rng(100) <= 5 && randomizer(mutations.random) ||
 	``;
 }
 
 function handleGenotype() { 
-	// pup.mutation = 'Harlequin';
 	const double = pup.mutation.includes('Chimera') || pup.mutation.includes('Harlequin');
-	const c = () => { return input.coatColour || randomizer(rngList([[70, coatColours.common],[95, coatColours.uncommon],[100, coatColours.rare]], 100))[0]; }
-	let ml = [];
-	const x = rng(5);
-	for (let i = 1; i <= x; i++) { ml.push(randomizer(rngList([[70, markings.common],[87, markings.uncommon],[95, markings.rare],[100, markings.unique]], 100))[0]); }
-	const m = () => { return input.marking || [...new Set(ml)].join('/'); }
+	const c = () => input.coatColour || randomizer(rngList([[70, coatColours.common],[95, coatColours.uncommon],[100, coatColours.rare]], 100))[0];
 
-	return double && `${[c(),m()].join('/')} // ${[c(),m()].join('/')}` || `${[c(),m()].join('/')}`;
+	function m() {
+		let ml = [];
+		function rollMarkings(y) {
+			const x = rng(y);
+			for (let i = 1; i <= x; i++) { ml.push(randomizer(rngList([[70, markings.common],[87, markings.uncommon],[95, markings.rare],[100, markings.unique]], 100))[0]); }
+		}
+		const im = [input.marking1, input.marking2, input.marking3, input.marking4, input.marking5].filter(Boolean);
+		rollMarkings(5 - im.length);
+		const combined = [...im, ...ml];
+		const markingsDict = [];
+		createDictionary(markings, 0, markingsDict);
+		return [...new Set(combined)].sort((a, b) => markingsDict.indexOf(a) - markingsDict.indexOf(b)).join('/');
+	}
+
+	return double && `${[c(),m()].join('/')} // ${[c(),m()].join('/')}` || [c(),m()].join('/');
 }
 
 function handlePhenotype() {
-	const geno1 = pup.genotype.split('//')[0].split('/').filter(Boolean);
-	const geno2 = pup.genotype.split('//')[1] || false;
+	const geno1 = pup.genotype.split(' // ')[0];
+	const geno2 = pup.genotype.split(' // ')[1] || false;
 	// console.log(geno1, geno2);
 
-	let phenoDictionary = [];
+	function readGeno(input) {
+		input = input.split('/').filter(Boolean);
+		const g = {
+			coatColour: [],
+			markings: [],
+		};
+		g.coatColour.push(lookup(coatColours, 1, input[0]));
+		for (let i = 0; i < input.length; i++) { g.markings.push(lookup(markings, 1, input[i])); }
+		g.coatColour = g.coatColour.filter(Boolean);
+		g.markings = g.markings.filter(Boolean);
+		const combined = g.markings.length > 0 && `${g.coatColour} With ${g.markings.join(', ')}` || `${g.coatColour}`;
+		return combined;
+	}
 
-	return;
+	return !geno2 && readGeno(geno1) || `${readGeno(geno1)} // ${readGeno(geno2)}`;
 }
 
 function handleSkills() {
@@ -294,4 +320,8 @@ populate('selectTail', tails, 'simple');
 populate('selectBonusTrait', bonusTraits, 'simple');
 populate('selectMutation', mutations, 'optGroup');
 populate('selectCoatColour', coatColours, 'geneList');
-populate('selectMarking', markings, 'geneList');
+populate('selectMarking1', markings, 'geneListAlt');
+populate('selectMarking2', markings, 'geneListAlt');
+populate('selectMarking3', markings, 'geneListAlt');
+populate('selectMarking4', markings, 'geneListAlt');
+populate('selectMarking5', markings, 'geneListAlt');

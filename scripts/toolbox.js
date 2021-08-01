@@ -122,6 +122,24 @@ function rngList(array, roll) {
 	return output;
 }
 
+// for creating ordered arrays to reference while sanitizing gene lists etc.
+function createDictionary(input, index, output) {
+	for (let [key] of Object.entries(input)) {
+		for (let i = 0; i < input[key].length; i++) {
+			output.push(input[key][i][index]);
+		}
+	}
+}
+
+// for looking up geno / pheno translations
+function lookup(reference, index, comparison) {
+	for (let [key] of Object.entries(reference)) {
+		for (let i = 0; i < reference[key].length; i++) {
+			if (reference[key][i].indexOf(comparison) !== -1) { return reference[key][i][index]; }
+		}
+	}
+}
+
 // HTML THINGIES
  
 function toggleDisplay(checkbox, toggle) {
@@ -182,19 +200,40 @@ function toggleDisplay(checkbox, toggle) {
 		let groups = Object.keys(array);
  
 		for (let i = 0; i < groups.length; i++) {
-		 let gro = groups[i];
-		 let groEle = document.createElement('optgroup');
-		 groEle.label = gro;
-		 select.appendChild(groEle);
- 
-		 let options = array[gro];
-		 for (let i = 0; i < options.length; i++) {
-			let opt = options[i][1];
-			let ele = document.createElement('option');
-			ele.textContent = opt;
-			ele.value = opt.replace(/\s/g, '');
-			select.appendChild(ele);
+			let gro = groups[i];
+			let groEle = document.createElement('optgroup');
+			groEle.label = gro;
+			select.appendChild(groEle);
+	
+			let options = array[gro];
+			for (let i = 0; i < options.length; i++) {
+				let opt = options[i][1];
+				let ele = document.createElement('option');
+				ele.textContent = opt;
+				ele.value = opt.replace(/\s/g, '');
+				select.appendChild(ele);
+			}
 		}
+	}
+
+	if (mode === 'geneListAlt') {
+		let select = document.getElementById(id);
+		let groups = Object.keys(array);
+ 
+		for (let i = 0; i < groups.length; i++) {
+			let gro = groups[i];
+			let groEle = document.createElement('optgroup');
+			groEle.label = gro;
+			select.appendChild(groEle);
+	
+			let options = array[gro];
+			for (let i = 0; i < options.length; i++) {
+				let opt = options[i][1];
+				let ele = document.createElement('option');
+				ele.textContent = opt;
+				ele.value = options[i][0].replace(/\s/g, ''); // alt = value is gene instead of layman
+				select.appendChild(ele);
+			}
 		}
 	}
  
