@@ -329,7 +329,12 @@ function handleSkills() {
 	const d = input.shellpin && 1 || rng(100) <= 10 && 1 || 0;
 	const s = input.stamvaul && 1 || rng(100) <= 10 && 1 || 0;
 
-	return a + d + s > 0 && `+${a} Attack, +${d} Defense, +${s} Speed` || false;
+	const combined = [];
+	if (a > 0) { combined.push(`+${a} Attack`); }
+	if (d > 0) { combined.push(`+${d} Defense`); }
+	if (s > 0) { combined.push(`+${s} Speed`); }
+	
+	return combined.length > 0 && combined.join(', ') || false;
 }
 
 function handleRunes() {
@@ -339,7 +344,13 @@ function handleRunes() {
 	const d = rng(100) <= 10 + mod && 1 || 0;
 	const v = rng(100) <= 10 + mod && 1 || 0;
 
-	return e + m + d + v > 0 && `+${e} Elemancy, +${m} Medic, +${d} Dark, +${v} Void` || false;
+	const combined = [];
+	if (e > 0) { combined.push(`+${e} Elemancy`); }
+	if (m > 0) { combined.push(`+${m} Medic`); }
+	if (d > 0) { combined.push(`+${d} Dark`); }
+	if (v > 0) { combined.push(`+${v} Void`); }
+
+	return combined.length > 0 && combined.join(', ') || false;
 }
 
 function handleHereditaryTraits() {
