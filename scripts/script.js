@@ -5,6 +5,10 @@ function constructInput() {
 	this.arativasSpirit = this.pillCheck.indexOf('Arativa\'s Spirit') !== -1 ? true : false;
 	this.solasdrake = this.pillCheck.indexOf('Solasdrake') !== -1 ? true : false;
 	this.shadowdrake = this.pillCheck.indexOf('Shadowdrake') !== -1 ? true : false;
+	this.furion = this.pillCheck.indexOf('Furion') !== -1 ? true : false;
+	this.shellpin = this.pillCheck.indexOf('Shellpin') !== -1 ? true : false;
+	this.stamvaul = this.pillCheck.indexOf('Stamvaul') !== -1 ? true : false;
+	this.runeSpiritFamiliar = this.pillCheck.indexOf('Rune Spirit Familiar') !== -1 ? true : false;
 	this.species = document.getElementById('selectSpecies').value || false;
 	this.gender = document.getElementById('selectGender').value || false;
 	this.rank = document.getElementById('selectRank').value || false;
@@ -321,11 +325,21 @@ function handlePhenotype() {
 }
 
 function handleSkills() {
-	return false;
+	const a = input.furion && 1 || rng(100) <= 10 && 1 || 0;
+	const d = input.shellpin && 1 || rng(100) <= 10 && 1 || 0;
+	const s = input.stamvaul && 1 || rng(100) <= 10 && 1 || 0;
+
+	return a + d + s > 0 && `+${a} Attack, +${d} Defense, +${s} Speed` || false;
 }
 
 function handleRunes() {
-	return false;
+	const mod = input.runeSpiritFamiliar && 10 || 0;
+	const e = rng(100) <= 10 + mod && 1 || 0;
+	const m = rng(100) <= 10 + mod && 1 || 0;
+	const d = rng(100) <= 10 + mod && 1 || 0;
+	const v = rng(100) <= 10 + mod && 1 || 0;
+
+	return e + m + d + v > 0 && `+${e} Elemancy, +${m} Medic, +${d} Dark, +${v} Void` || false;
 }
 
 function handleHereditaryTraits() {
@@ -354,17 +368,15 @@ function handleHereditaryTraits() {
 // PAGE SETUP
 const fillRarity = `<br><optgroup label="Rarities"></optgroup><br><option value="Common">Common</option><br><option value="Uncommon">Uncommon</option><br><option value="Rare">Rare</option>`;
 const fillUnique = `<br><option value="Unique">Unique</option>`
-const selectIds = ['selectSpecies', 'selectBuild', 'selectCoatColour', 'selectMarkings', 'selectHereditaryTraits'];
-function populateList(ids, fill) {
-	for (let i = 0; i < selectIds.length; i++) {
+function populateList(ids) {
+	for (let i = 0; i < ids.length; i++) {
 		document.getElementById(ids[i]).innerHTML += fillRarity;
-		if (ids[i] === 'selectHereditaryTraits') { document.getElementById(ids[i]).innerHTML += fillUnique; }
+		if (ids[i] === 'selectHereditaryTraits' || ids[i] === 'selectMarkings') { document.getElementById(ids[i]).innerHTML += fillUnique; }
 	}
 }
 
-populateList(selectIds, fillRarity);
-document.getElementById('selectMarkings').innerHTML += `<br><option value="Unique">Unique</option>`;
-populate('pillContainer', ['Nero\'s Luck', 'Arativa\'s Spirit', 'Solasdrake', 'Shadowdrake', 'Furion', 'Shellpin', 'Stamvaul',], 'pillSelect');
+populateList(['selectSpecies', 'selectBuild', 'selectCoatColour', 'selectMarkings', 'selectHereditaryTraits']);
+populate('pillContainer', ['Nero\'s Luck', 'Arativa\'s Spirit', 'Solasdrake', 'Shadowdrake', 'Furion', 'Shellpin', 'Stamvaul', 'Rune Spirit Familiar'], 'pillSelect');
 populate('selectSpecies', species, 'optGroup');
 populate('selectGender', ['Male','Female'], 'simple');
 populate('selectRank', ['Runt Rank', 'Omega Rank'], 'simple');
