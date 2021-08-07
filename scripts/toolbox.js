@@ -140,6 +140,17 @@ function lookup(reference, index, comparison) {
 	}
 }
 
+// for getting select multiple values as an array
+function getSelectMultiple(id) {
+	const output = [];
+	for (let i=0; i < document.getElementById(id).options.length; i++) {
+		if (document.getElementById(id).options[i].selected === true) {
+			output.push(document.getElementById(id).options[i].value)
+		}
+	}
+	return output;
+}
+
 // HTML THINGIES
  
 function toggleDisplay(checkbox, toggle) {

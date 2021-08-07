@@ -37,6 +37,11 @@ body {
 }
 
 select {
+	font-size: .6em;
+	text-transform: capitalize
+}
+
+/* select {
 	all: unset;
 	padding: .5em;
 	background-color: var(--clrAccent);
@@ -49,7 +54,7 @@ select {
 
 select:hover {
 	background-color: var(--grey);
-}
+} */
 
 button {
 	all: unset;
@@ -74,9 +79,9 @@ button:active {
 	user-select: none;
 	margin: 0em .3em;
 	margin-bottom: .5em;
-	padding: .3em;
+	padding: .1em;
 	font-size: .5em;
-	font-weight: 600;
+	/* font-weight: 600; */
 	white-space: nowrap;
 	border-radius: .5em;
 	border: .1em solid var(--clrAccent); 

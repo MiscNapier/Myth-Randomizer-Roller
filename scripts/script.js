@@ -14,11 +14,9 @@ function constructInput() {
 	this.bonusTrait = document.getElementById('selectBonusTrait').value || false;
 	this.mutation = document.getElementById('selectMutation').value || false;
 	this.coatColour = document.getElementById('selectCoatColour').value || false;
-	this.marking1 = document.getElementById('selectMarking1').value || false;
-	this.marking2 = document.getElementById('selectMarking2').value || false;
-	this.marking3 = document.getElementById('selectMarking3').value || false;
-	this.marking4 = document.getElementById('selectMarking4').value || false;
-	this.marking5 = document.getElementById('selectMarking5').value || false;
+	this.markings = document.getElementById('selectMarkings').value || false;
+	this.markings = getSelectMultiple('selectMarkings').filter(Boolean).slice(0, 4) || false;
+	this.hereditaryTraits = getSelectMultiple('selectHereditaryTraits').filter(Boolean).slice(0, 3) || false;
 }
 
 let pup = {
@@ -44,8 +42,8 @@ function constructPup() {
 	pup.mutation = handleMutation();
 	pup.genotype = handleGenotype() || 'genotype';
 	pup.phenotype = handlePhenotype() || 'phenotype';
-	pup.skills = handleSkills() || 'skills';
-	pup.runes = handleRunes() || 'runes';
+	pup.skills = handleSkills();
+	pup.runes = handleRunes();
 	pup.hereditaryTraits = handleHereditaryTraits();
 }
 
@@ -62,8 +60,8 @@ function buttonPress() {
 		document.getElementById("output").innerHTML += pup.mutation !== `` && `<br>M: ${pup.mutation}` || ``;
 		document.getElementById("output").innerHTML += `<br>G: ${pup.genotype}`;
 		document.getElementById("output").innerHTML += `<br>P: ${pup.phenotype}`;
-		document.getElementById("output").innerHTML += `<br><b>Skills:</b> ${pup.skills}`;
-		document.getElementById("output").innerHTML += `<br><b>Runes:</b> ${pup.runes}`;
+		document.getElementById("output").innerHTML += pup.skills !== false && `<br><b>Skills:</b> ${pup.skills}` || ``;
+		document.getElementById("output").innerHTML += pup.runes !== false && `<br><b>Runes:</b> ${pup.runes}` || ``;
 		document.getElementById("output").innerHTML += pup.hereditaryTraits !== false && `<br><b>Hereditary Traits:</b><br>${pup.hereditaryTraits}` || ``;
 	}
 }
@@ -201,25 +199,42 @@ const markings = {
 	],
 };
 
-// const hereditaryTraits = {
-// 	common: [
-// 		'Hunter',
-// 		'Feathery Flyer',
-// 		'Bone Crusher',
-// 		'Fisher',
-// 		'Explorer',
-// 		'Camper',
-// 	],
-// 	uncommon: [
-
-// 	],
-// 	rare: [
-
-// 	],
-// 	unique: [
-
-// 	],
-// }
+const hereditaryTraits = {
+	common: [
+		'Hunter',
+		'Feathery Flyer',
+		'Bone Crusher',
+		'Fisher',
+		'Explorer',
+		'Camper',
+	],
+	uncommon: [
+		'Meat Hoarder',
+		'Medic',
+		'Fellowship I',
+		'Skull Breaker',
+	],
+	rare: [
+		'Runebook Searcher',
+		'Ancient Runes',
+		'Strength Addiction',
+		'Mile Runner',
+		'Guardian Protector',
+		'Warm Heart',
+	],
+	unique: [
+		'Velox DNA I',
+		'Hexin DNA I',
+		'Enquisitors DNA I',
+		'Arcid DNA I',
+		'Mykron DNA I',
+		'Zinner DNA I',
+		'Zephies DNA I',
+		'Minkin DNA I',
+		'Funia DNA I',
+		'Vilkren DNA I',
+	],
+}
 
 // HANDLERS
 function handleSpecies() {
@@ -240,7 +255,7 @@ function handleRank() {
 }
 
 function handleBuild() {
-	const b = input.build || randomizer(rngList([[70, builds.common],[95, builds.uncommon],[100, builds.rare]], 100));
+	const b = input.build === 'Common' && randomizer(builds.common) || input.build === 'Uncommon' && randomizer(builds.uncommon) || input.build === 'Rare' && randomizer(builds.rare) || input.build || randomizer(rngList([[70, builds.common],[95, builds.uncommon],[100, builds.rare]], 100));
 	const e = input.earTrait || rng(100) <= 10 && `${randomizer(ears)}` || ``;
 	const t = input.tailTrait || rng(100) <= 10 && `${randomizer(tails)}` || ``;
 	const bt = input.bonusTrait || rng(100) <= 10 && `${randomizer(bonusTraits)}` || ``;
@@ -264,9 +279,17 @@ function handleGenotype() {
 			const x = rng(y);
 			for (let i = 1; i <= x; i++) { ml.push(randomizer(rngList([[70, markings.common],[87, markings.uncommon],[95, markings.rare],[100, markings.unique]], 100))[0]); }
 		}
-		const im = [input.marking1, input.marking2, input.marking3, input.marking4, input.marking5].filter(Boolean);
-		rollMarkings(5 - im.length);
-		const combined = [...im, ...ml];
+
+		let sml = [];
+		const r = ['Common', 'Uncommon', 'Rare', 'Unique'];
+		for (let i = 0; i < r.length; i++) {
+			if (input.markings.includes(r[i])) { sml.push(randomizer(markings[r[i].toLowerCase()])[0]); }
+			input.markings = input.markings.filter(a => a !== r[i]);
+		}
+		sml = [...sml, ...input.markings];
+
+		rollMarkings(5);
+		const combined = [...sml, ...ml].slice(0, 3);
 		const markingsDict = [];
 		createDictionary(markings, 0, markingsDict);
 		return [...new Set(combined)].sort((a, b) => markingsDict.indexOf(a) - markingsDict.indexOf(b)).join('/');
@@ -298,19 +321,50 @@ function handlePhenotype() {
 }
 
 function handleSkills() {
-	return;
-}
-
-function handleRunes() {
-	return;
-}
-
-function handleHereditaryTraits() {
 	return false;
 }
 
+function handleRunes() {
+	return false;
+}
+
+function handleHereditaryTraits() {
+	const htl = [];
+	function rollHereditaryTraits(y) {
+		for (let i = 1; i <= y; i++) { htl.push(randomizer(rngList([[40, hereditaryTraits.common],[70, hereditaryTraits.uncommon],[90, hereditaryTraits.rare],[100, hereditaryTraits.unique]], 100))); }
+	}
+
+	let shtl = [];
+	const r = ['Common', 'Uncommon', 'Rare', 'Unique'];
+	for (let i = 0; i < r.length; i++) {
+		if (input.hereditaryTraits.includes(r[i])) { shtl.push(randomizer(hereditaryTraits[r[i].toLowerCase()])); }
+		input.hereditaryTraits = input.hereditaryTraits.filter(a => a !== r[i]);
+	}
+	shtl = [...shtl, ...input.hereditaryTraits];
+
+	rollHereditaryTraits(rngList([[70, 0], [90, 1], [98, 2], [100, 3]], 100));
+	const combined = [...shtl, ...htl].slice(0, 3);
+	const hereditaryTraitsDict = [];
+	createDictionary(hereditaryTraits, 0, hereditaryTraitsDict);
+	const ht = [...new Set(combined)].sort((a, b) => hereditaryTraitsDict.indexOf(a) - hereditaryTraitsDict.indexOf(b)).join('<br>- ');
+
+	return ht && `- ${ht}` || false;
+}
+
 // PAGE SETUP
-populate('pillContainer', ['Nero\'s Luck', 'Arativa\'s Spirit', 'Solasdrake', 'Shadowdrake'], 'pillSelect');
+const fillRarity = `<br><optgroup label="Rarities"></optgroup><br><option value="Common">Common</option><br><option value="Uncommon">Uncommon</option><br><option value="Rare">Rare</option>`;
+const fillUnique = `<br><option value="Unique">Unique</option>`
+const selectIds = ['selectSpecies', 'selectBuild', 'selectCoatColour', 'selectMarkings', 'selectHereditaryTraits'];
+function populateList(ids, fill) {
+	for (let i = 0; i < selectIds.length; i++) {
+		document.getElementById(ids[i]).innerHTML += fillRarity;
+		if (ids[i] === 'selectHereditaryTraits') { document.getElementById(ids[i]).innerHTML += fillUnique; }
+	}
+}
+
+populateList(selectIds, fillRarity);
+document.getElementById('selectMarkings').innerHTML += `<br><option value="Unique">Unique</option>`;
+populate('pillContainer', ['Nero\'s Luck', 'Arativa\'s Spirit', 'Solasdrake', 'Shadowdrake', 'Furion', 'Shellpin', 'Stamvaul',], 'pillSelect');
 populate('selectSpecies', species, 'optGroup');
 populate('selectGender', ['Male','Female'], 'simple');
 populate('selectRank', ['Runt Rank', 'Omega Rank'], 'simple');
@@ -320,8 +374,5 @@ populate('selectTail', tails, 'simple');
 populate('selectBonusTrait', bonusTraits, 'simple');
 populate('selectMutation', mutations, 'optGroup');
 populate('selectCoatColour', coatColours, 'geneList');
-populate('selectMarking1', markings, 'geneListAlt');
-populate('selectMarking2', markings, 'geneListAlt');
-populate('selectMarking3', markings, 'geneListAlt');
-populate('selectMarking4', markings, 'geneListAlt');
-populate('selectMarking5', markings, 'geneListAlt');
+populate('selectMarkings', markings, 'geneListAlt');
+populate('selectHereditaryTraits', hereditaryTraits, 'optGroup');
