@@ -267,7 +267,7 @@ function handleBuild() {
 }
 
 function handleMutation() {
-	return input.mutation || input.solasdrake && !input.shadowdrake && rng(100) <= 15 && randomizer(mutations.random) || 
+	return input.mutation === 'Random' && randomizer(mutations.random) || input.mutation === 'Inbred' && randomizer(mutations.inbred) || input.mutation || input.solasdrake && !input.shadowdrake && rng(100) <= 15 && randomizer(mutations.random) || 
 	!input.solasdrake && input.shadowdrake && rng(100) <= 15 && randomizer(mutations.inbred) || 
 	rng(100) <= 5 && randomizer(mutations.random) ||
 	``;
@@ -377,7 +377,7 @@ function handleHereditaryTraits() {
 }
 
 // PAGE SETUP
-const fillRarity = `<br><optgroup label="Rarities"></optgroup><br><option value="Common">Common</option><br><option value="Uncommon">Uncommon</option><br><option value="Rare">Rare</option>`;
+const fillRarity = `<br><optgroup label="Rarity"></optgroup><br><option value="Common">Common</option><br><option value="Uncommon">Uncommon</option><br><option value="Rare">Rare</option>`;
 const fillUnique = `<br><option value="Unique">Unique</option>`
 function populateList(ids) {
 	for (let i = 0; i < ids.length; i++) {
@@ -395,6 +395,7 @@ populate('selectBuild', builds, 'optGroup');
 populate('selectEars', ears, 'simple');
 populate('selectTail', tails, 'simple');
 populate('selectBonusTrait', bonusTraits, 'simple');
+populate('selectMutation', {type: ['Random', 'Inbred']}, 'optGroup')
 populate('selectMutation', mutations, 'optGroup');
 populate('selectCoatColour', coatColours, 'geneList');
 populate('selectMarkings', markings, 'geneListAlt');
